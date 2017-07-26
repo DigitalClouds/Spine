@@ -926,6 +926,38 @@ spine.anim_slot.prototype.load = function (json)
 
 	return this;
 }
+/**
+ * @constructor
+ */
+spine.anim_event = function(){
+	this.name = "";
+	this.int = null;
+	this.float = null;
+	this.string = null;
+}
+
+spine.anim_event.prototype.load = function(json){
+
+	this.name = json.name;
+
+	if(json.int){
+		this.int = json.int;
+	}
+
+	if(json.float){
+		this.float = json.float;
+	}
+
+	if(json.string){
+		this.string = json.string;
+	}
+
+	if(json.time !== undefined){
+		this.time = json.time;
+	}
+
+	return this;
+}
 
 /**
  * @constructor
@@ -939,6 +971,8 @@ spine.animation = function ()
 	this.anim_bones = {};
 	/** @type {Object.<string,spine.anim_slot>} */
 	this.anim_slots = {};
+	/** @type {Object.<string,spine.anim_event>} */
+	this.anim_events = {};
 
 	/** @type {number} */
 	this.min_time = 0;
@@ -974,6 +1008,12 @@ spine.animation.prototype.load = function (json)
 		this.min_time = Math.min(this.min_time, anim_slot.min_time);
 		this.max_time = Math.max(this.max_time, anim_slot.max_time);
 		this.anim_slots[slot_i] = anim_slot;
+	}
+
+	if(json.events) for(var event_i in json.events)
+	{
+		var anim_event = new spine.anim_event().load(json.events[event_i]);
+		this.anim_events[event_i] = anim_event;
 	}
 
 	this.length = this.max_time - this.min_time;
@@ -1182,8 +1222,27 @@ spine.data.prototype.getAnimLength = function (anim_index)
 }
 
 /**
- * @constructor 
- * @param {spine.data=} data 
+ *
+ * @param {string} event
+ * @param {function} callback
+ */
+spine.data.prototype.setCallback = function( event, callback){
+	this.m_callbacks[event] = callback;
+
+}
+
+/**
+ *
+ * @param {string} event
+ */
+spine.data.prototype.removeCallback = function(event){
+	this.m_callbacks[event] = null;
+	delete this.m_callbacks;
+}
+
+/**
+ * @constructor
+ * @param {spine.data=} data
  */
 spine.pose = function (data)
 {
@@ -1397,7 +1456,10 @@ spine.pose.prototype.update = function (elapsed_time)
 		if (!this.m_play_once)
 		{
 			while (this.m_time < 0) { this.m_time += anim_length;}
-			while (this.m_time >= anim_length) { this.m_time -= anim_length; }
+			while (this.m_time >= anim_length) {
+				this.m_time -= anim_length;
+				this.m_previousTime -= anim_length;
+			}
 		}
 
 		this.m_dirty = true;
@@ -1560,6 +1622,30 @@ spine.pose.prototype.strike = function ()
 			}
 		}
 	}
+
+	if(animation && animation.anim_events){
+		for( var event_i in animation.anim_events){
+            var event =  animation.anim_events[event_i];
+            if(event.time * 1000 > this.m_previousTime && event.time * 1000 <= time){
+                // data.m_animations.anim_events
+				if(data.m_callbacks[event.name]){
+					data.m_callbacks[event.name]({
+						string: event.string,
+						int: event.int,
+						float: event.float
+					});
+				}
+				if(data.m_callbacks['keyframe']){
+				    data.m_callbacks['keyframe']({
+                        name: event.name,
+                        string: event.string,
+                        int: event.int,
+                        float: event.float
+                    });
+                }
+            }
+        }
+    }
 }
 
 spine.Atlas = function (atlasText, textureLoader) {
