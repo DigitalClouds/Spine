@@ -491,6 +491,12 @@ spine.skin_attachment = function ()
 	this.width = 0;
 	/** @type {number} */
 	this.height = 0;
+	/** @type {number} */
+	this.vertexCount = 0;
+	/** @type {?Array.<number>} */
+	this.vertices = null;
+	/** @type {?string} */
+	this.end = null;
 }
 
 /**
@@ -508,6 +514,11 @@ spine.skin_attachment.prototype.load = function (json)
 	case "animatedRegion":
 		var fps = json.fps && spine.toFloat(json.fps, 0);
 		var playMode = json.playMode && spine.toString(json.playMode, "forward");
+		break;
+	case "clipping":
+		this.end = json.end;
+		this.vertexCount = spine.toInt(json.vertexCount);
+		this.vertices = json.vertices;
 		break;
 	default:
 		break;
@@ -1139,6 +1150,8 @@ spine.data = function ()
 	this.m_skeleton = new spine.skeleton();
 	/** @type {Object.<string,spine.animation>} */
 	this.m_animations = {};
+
+	this.m_callbacks = {};
 }
 
 /**
