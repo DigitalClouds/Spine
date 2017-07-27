@@ -1,32 +1,3 @@
-/******************************************************************************
-* Spine Runtimes Software License
-* Version 2.1
-*
-* Copyright (c) 2013, Esoteric Software
-* All rights reserved.
-*
-* You are granted a perpetual, non-exclusive, non-sublicensable and
-* non-transferable license to install, execute and perform the Spine Runtimes
-* Software (the "Software") solely for internal use. Without the written
-* permission of Esoteric Software (typically granted by licensing Spine), you
-* may not (a) modify, translate, adapt or otherwise create derivative works,
-* improvements of the Software or develop new applications using the Software
-* or (b) remove, delete, alter or obscure any trademarks or any copyright,
-* trademark, patent or other intellectual property or proprietary rights
-* notices on or in the Software, including any copy thereof. Redistributions
-* in binary or source form must include this license and terms.
-*
-* THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-* MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-* EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*****************************************************************************/
 var COMPILED=!0,goog=goog||{};goog.global=this;goog.isDef=function(a){return void 0!==a};goog.isString=function(a){return"string"==typeof a};goog.isBoolean=function(a){return"boolean"==typeof a};goog.isNumber=function(a){return"number"==typeof a};goog.exportPath_=function(a,b,c){a=a.split(".");c=c||goog.global;a[0]in c||!c.execScript||c.execScript("var "+a[0]);for(var d;a.length&&(d=a.shift());)!a.length&&goog.isDef(b)?c[d]=b:c=c[d]&&c[d]!==Object.prototype[d]?c[d]:c[d]={}};
 goog.define=function(a,b){var c=b;COMPILED||(goog.global.CLOSURE_UNCOMPILED_DEFINES&&void 0===goog.global.CLOSURE_UNCOMPILED_DEFINES.nodeType&&Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_UNCOMPILED_DEFINES,a)?c=goog.global.CLOSURE_UNCOMPILED_DEFINES[a]:goog.global.CLOSURE_DEFINES&&void 0===goog.global.CLOSURE_DEFINES.nodeType&&Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_DEFINES,a)&&(c=goog.global.CLOSURE_DEFINES[a]));goog.exportPath_(a,c)};goog.DEBUG=!0;goog.LOCALE="en";
 goog.TRUSTED_SITE=!0;goog.STRICT_MODE_COMPATIBLE=!1;goog.DISALLOW_TEST_ONLY_CODE=COMPILED&&!goog.DEBUG;goog.ENABLE_CHROME_APP_SAFE_SCRIPT_LOADING=!1;goog.provide=function(a){if(goog.isInModuleLoader_())throw Error("goog.provide can not be used within a goog.module.");if(!COMPILED&&goog.isProvided_(a))throw Error('Namespace "'+a+'" already declared.');goog.constructNamespace_(a)};
@@ -104,7 +75,7 @@ spine.data.prototype.loadSkeleton=function(a){this.m_skeleton.load(a);return thi
 spine.data.prototype.removeCallback=function(a){this.m_callbacks[a]=null;delete this.m_callbacks};spine.pose=function(a){this.m_data=a||null;this.m_anim_name="";this.m_LoopCount=this.m_time=0;this.m_play_once=!1;this.m_dirty=!0;this.m_tweened_skel_bones={};this.m_tweened_skel_slots={}};spine.pose.prototype.resetTime=function(){this.m_LoopCount=this.m_time=0};spine.pose.prototype.getNumAnims=function(){return this.m_skeleton?this.m_skeleton.getNumAnims():0};spine.pose.prototype.getAnim=function(){return this.m_anim_name};
 spine.pose.prototype.setAnim=function(a){isFinite(a)||this.m_anim_name==a||(this.m_anim_name=a,this.m_LoopCount=this.m_time=0,this.m_dirty=!0)};spine.pose.prototype.setNextAnim=function(){};spine.pose.prototype.setPrevAnim=function(){};spine.pose.prototype.getAnimName=function(a){return null};spine.pose.prototype.getAnimLength=function(a){a=void 0!==a?a:this.m_anim_name;var b=this.m_data;return b?(a=b.m_animations[a])?a.length:0:0};spine.pose.prototype.getLoopCount=function(){return this.m_LoopCount};
 spine.pose.prototype.setPlayOnce=function(a){this.m_play_once=a};spine.pose.prototype.getTime=function(){return this.m_time};spine.pose.prototype.setTime=function(a){if(this.m_time!=a){this.m_time=a;a=this.getAnimLength();this.m_LoopCount=Math.floor(this.m_time/a);if(0<a&&(this.m_time>=a&&this.m_LoopCount++,!this.m_play_once)){for(;0>this.m_time;)this.m_time+=a;for(;this.m_time>=a;)this.m_time-=a}this.m_dirty=!0}};
-spine.pose.prototype.update=function(a){var b=this.getAnimLength();if(0<b){this.m_time+=a;this.m_time>=b&&this.m_LoopCount++;if(!this.m_play_once){for(;0>this.m_time;)this.m_time+=b;for(;this.m_time>=b;)this.m_time-=b,this.m_previousTime-=b}this.m_dirty=!0}};
+spine.pose.prototype.update=function(a){var b=this.getAnimLength();if(0<b){this.m_previousTime=this.m_time;this.m_time+=a;this.m_time>=b&&this.m_LoopCount++;if(!this.m_play_once){for(;0>this.m_time;)this.m_time+=b;for(;this.m_time>=b;)this.m_time-=b,this.m_previousTime-=b}this.m_dirty=!0}};
 spine.pose.prototype.strike=function(){var a=this.m_data;if(a){var b=a.m_skeleton,c=a.m_animations[this.m_anim_name],d=this.getTime();if(this.m_dirty){this.m_dirty=!1;for(var e in b.skel_bones){var f=b.skel_bones[e];var g=this.m_tweened_skel_bones[e]||(this.m_tweened_skel_bones[e]=new spine.skel_bone);g.copy(f);var k=c&&c.anim_bones&&c.anim_bones[e];if(k){if(f=k.translate_keys){var l=spine.animation.find_key(f,d);if(-1!=l){var h=f[l],l=l+1;l<f.length?(l=f[l],f=(d-h.time)/(l.time-h.time),f=h.curve(f),
     g.x+=spine.tween(h.x,l.x,f),g.y+=spine.tween(h.y,l.y,f)):(g.x+=h.x,g.y+=h.y)}}if(f=k.rotate_keys)l=spine.animation.find_key(f,d),-1!=l&&(h=f[l],l+=1,l<f.length?(l=f[l],f=(d-h.time)/(l.time-h.time),f=h.curve(f),g.rotation+=spine.tweenAngle(h.angle,l.angle,f)):g.rotation+=h.angle);if(f=k.scale_keys)h=spine.animation.find_key(f,d),-1!=h&&(k=f[h],h+=1,h<f.length?(h=f[h],f=(d-k.time)/(h.time-k.time),f=k.curve(f),g.scaleX+=spine.tween(k.scaleX,h.scaleX,f)-1,g.scaleY+=spine.tween(k.scaleY,h.scaleY,f)-1):
     (g.scaleX+=k.scaleX-1,g.scaleY+=k.scaleY-1))}}for(var n in b.skel_slots)if(g=b.skel_slots[n],e=this.m_tweened_skel_slots[n]||(this.m_tweened_skel_slots[n]=new spine.skel_slot),e.copy(g),g=c&&c.anim_slots&&c.anim_slots[n]){if(f=g.color_keys)h=spine.animation.find_key(f,d),-1!=h&&(k=f[h],h+=1,h<f.length?(h=f[h],f=(d-k.time)/(h.time-k.time),f=k.curve(f),e.color.r=spine.tween(k.color.r,h.color.r,f),e.color.g=spine.tween(k.color.g,h.color.g,f),e.color.b=spine.tween(k.color.b,h.color.b,f),e.color.a=spine.tween(k.color.a,
