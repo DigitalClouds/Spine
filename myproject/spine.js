@@ -1463,6 +1463,7 @@ spine.pose.prototype.update = function (elapsed_time)
 
 	if (anim_length > 0)
 	{
+		this.m_previousTime = this.m_time;
 		this.m_time += elapsed_time;
 
 		if (this.m_time >= anim_length) this.m_LoopCount++;
